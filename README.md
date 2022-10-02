@@ -28,8 +28,8 @@ The first pull command retrieves the Redis image from DockerHub so that we can t
 
 ### Getting Values from Redis
 > db.Get(database, "creator")
-#### Output
-> "Mustafa"
+
+> Output: "Mustafa"
 
 ![Screenshot 2022-10-02 223524](https://user-images.githubusercontent.com/113289516/193472908-039225c1-2d56-43ce-bc4d-85ce896c1f63.png)
 
@@ -55,14 +55,31 @@ func JsonMarshal(msg Message) []byte {
 
 ```
 var message = jsonhandling.Message{
-    Sender:      "Bob",
-		Receiver:    "Alice",
-		MessageBody: "Welcome to Redis in-memory caching.",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+	Sender:      "Bob",
+	Receiver:    "Alice",
+	MessageBody: "Welcome to Redis in-memory caching.",
+	CreatedAt:   time.Now(),
+	UpdatedAt:   time.Now(),
 }
 ```
 > db.Set(database, "message", jsonhandling.JsonMarshal(message), 0)
+
+### Retrieving a Specific Value from JSON Object
+```
+func JsonUnmarshal(data string, msg Message) Message {
+	err := json.Unmarshal([]byte(data), &msg)
+	db.Must(err)
+	return msg
+}
+```
+
+```
+var msg jsonhandling.Message
+data := db.Get(database, "message")
+current := jsonhandling.JsonUnmarshal(data, msg)
+fmt.Println(string(current.MessageBody))
+```
+> Output: Welcome to Redis in-memory caching.
 
 ## Proven Results
 ![Screenshot 2022-10-02 224133](https://user-images.githubusercontent.com/113289516/193473116-13382647-5006-44dd-9c7a-c40dc0d1132d.png)
